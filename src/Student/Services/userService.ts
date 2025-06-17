@@ -15,7 +15,7 @@ export default class StudentServices {
   static async getAllStudents() {
     try {
       const users = await prisma.student.findMany({
-        include: { profile: true },
+        include: { profile: true , Books : true , Subject: true},
       });
       return users;
     } catch (err) {

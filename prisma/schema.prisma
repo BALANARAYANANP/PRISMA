@@ -23,6 +23,9 @@ model Student {
   age     Int
 
   profile Profile?
+  Books   Books[]
+  Subject Subject[]
+  Many    Many[]
 
   @@unique([name, lname])
 }
@@ -34,20 +37,33 @@ model Profile {
   user   Student @relation(fields: [userId], references: [id])
 }
 
-model User {
-  id          Int      @id @default(autoincrement())
-  name        String
-  age         Int
-  content     String   @db.Text
-  createdAt   DateTime @default(now())
-  address     Address? @relation(fields: [addressCity], references: [city])
-  addressCity String?
+model Books {
+  id           Int      @id @default(autoincrement())
+  name         String
+  Book_code    Int
+  content_type String   @db.Text
+  createdAt    DateTime @default(now())
+  userId       Int
+  student      Student  @relation(fields: [userId], references: [id])
 
   @@index([name])
-  @@map("Employess")
+  @@map("Books")
 }
 
-model Address {
-  city String @id
-  User User[]
+model Subject {
+  id        Int       @id @default(autoincrement())
+  name      String
+  Tutor     String
+  createdAt DateTime  @default(now())
+  stud_id   Int
+  student   Student @relation(fields: [stud_id], references: [id])
+  Many      Many[]
+}
+
+model Many {
+  id      Int     @id @default(autoincrement())
+  stud_id Int
+  sub_id  Int
+  student Student @relation(fields: [stud_id], references: [id])
+  subject Subject @relation(fields: [sub_id], references: [id])
 }
