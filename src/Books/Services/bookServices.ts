@@ -1,9 +1,13 @@
 import { prisma } from "../../Prisma";
+import StudentServices from "../../Student/Services/userService";
 import { BookRequest } from "../dto/Bookdto";
 
 export default class BookServices {
   static async NewBookCreation(data: BookRequest) {
     try {
+    //   const isValidUserId = await StudentServices.getOneUser(id: data.id)
+    //   if(!isValidUserId)
+        // throw new Error()
       const new_book = await prisma.books.create({
         data: {
           name: data.name,

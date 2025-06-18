@@ -6,6 +6,7 @@ import BookServices from "../Services/bookServices";
 export const CreateNewBook = async (req: Request, res: Response) => {
   try {
     const data: BookRequest = req.body;
+    
     if (data) {
       const book = await BookServices.NewBookCreation(data);
       res.status(200).send(book)
