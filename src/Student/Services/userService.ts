@@ -1,6 +1,6 @@
 import { Prisma } from "../../../generated/prisma";
 import { prisma } from "../../Prisma";
-import { OneUser } from "../dto/student";
+import { OneUser, Studentdto } from "../dto/student";
 
 export default class StudentServices {
   static async createUser(Studentdata: Prisma.StudentCreateInput) {
@@ -25,10 +25,49 @@ export default class StudentServices {
 
   static async getOneUser( id : OneUser) {
     try {
-      const user = await prisma.student.findUnique({ where:  id  });
+      const user = await prisma.student.findUnique({
+        where: { id: id.id },
+        include: {
+          profile: true,
+          Books: true,
+          Subject: true
+        }
+      });
       return user;
     } catch (err) {
       throw new Error();
     }
   }
+
+  static async UpdateStudent (id:OneUser, data:Studentdto){
+    try{
+      const UpdatedStudent = await prisma.student.update({data:{
+
+        email: data.email,
+        name: data.name,
+        age: data.age,
+        lname: data.lname,
+        isAlive: data.isAlive
+      },
+      where:{id:id.id}
+      })
+      return UpdatedStudent
+    }catch(err){
+      throw new Error();
+      
+    }
+}
+  static async DeleteStudent (id: OneUser){
+    try{
+    const deleteStudent = await prisma.student.delete({where : {id: id.id}})
+    return deleteStudent
+  }catch(err)
+  {
+    throw new Error();
+  }
+    
+  }
+
+
+
 }

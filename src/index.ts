@@ -8,7 +8,7 @@ import { SubjectRoute } from "./Subjects/routes/subjectroutes";
 const prisma = new PrismaClient();
 
 const app = express();
-app.use(express.json());
+app.use(express.json())
 app.use("/api", router);
 app.use('/profile', Profilerouter)
 app.use('/book', bookroute)

@@ -4,7 +4,7 @@ import { OneUser, Studentdto } from "../dto/student";
 import { Prisma } from "../../../generated/prisma";
 import StudentServices from "../Services/userService";
 
-export const CreateUser = async (
+export const CreateStudent = async (
   req: Request,
   res: Response
 ): Promise<void> => {
@@ -19,7 +19,7 @@ export const CreateUser = async (
   }
 };
 
-export const GetAllUsers = async (
+export const getAllStudents = async (
   req: Request,
   res: Response
 ): Promise<void> => {
@@ -48,27 +48,22 @@ export const OneStudent = async (req: Request, res: Response) => {
 export const UpdateStudent = async (req: Request, res: Response) => {
   try {
     const id = parseInt(req.params.id);
-    const data: Prisma.StudentUpdateInput = req.body;
-    const student = await prisma.student.update({
-      data: data,
-      where: {
-        id: id,
-      },
-    });
+    const data:Studentdto = req.body;
+    const student = await StudentServices.UpdateStudent({id}, data );
     res.status(200).json({ "User Updated": student });
   } catch (err) {
     res.status(401).json({ message: "User Could Updated" });
   }
 };
 
-export const deleteUserById = async (
+export const deleteStudent = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   try {
     const id = parseInt(req.params.id);
     if (id) {
-      const users = await prisma.student.delete({ where: { id: id } });
+      const users = await StudentServices.DeleteStudent({ id });
       res.status(200).send("User Deleted");
     } else {
       res.status(404).json({ message: "User Not Found" });

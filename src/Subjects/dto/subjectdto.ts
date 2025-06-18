@@ -2,7 +2,7 @@
 
 export type Subjectdto = {
     id: number,
-    name: string,
+    name: string[],
     Tutor : string,
     stud_id : number;
 }

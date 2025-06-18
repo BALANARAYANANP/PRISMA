@@ -2,21 +2,13 @@ import { Request, Response } from "express";
 import { Prisma } from "../../../generated/prisma";
 import { prisma } from "../../Prisma";
 import { Profiledto } from "../dto/profileInterface";
+import ProfileServices from "../Services/profileServices";
 
 export const CreateProfile = async (req: Request, res: Response) => {
   try {
     const data: Profiledto = req.body;
     if (data) {
-      const profile = await prisma.profile.create({
-        data: {
-          bio: data.bio,
-          user: {
-            connect: {
-              id: data.user_id
-            },
-          },
-        },
-      });
+      const profile = await ProfileServices.createProfile(data);
       res.status(200).json({ "Profile Created Sucessfully": profile });
     } else {
       res.status(404).json({ Error: "No Input Given" });
@@ -26,21 +18,16 @@ export const CreateProfile = async (req: Request, res: Response) => {
   }
 };
 
+export const GetAllProfile = async (req: Request, res: Response) => {
+  try {
+    const profile = await ProfileServices.GetAllProfile();
 
-export const GetAllProfile = async (req:Request , res: Response)=>{
-  try{
-    const profile = await prisma.profile.findMany({
-      include: {user: true}
-    })
-
-    if(profile){
-      res.status(200).send(profile)
+    if (profile) {
+      res.status(200).send(profile);
+    } else {
+      res.status(404).send("No profiles Found");
     }
-    else{
-      res.status(404).send("No profiles Found")
-    }
-  }catch(err:any){
-    res.status(400).send(err.message)
+  } catch (err: any) {
+    res.status(400).send(err.message);
   }
-
-}
+};

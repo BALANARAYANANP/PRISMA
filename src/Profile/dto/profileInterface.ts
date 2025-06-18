@@ -5,3 +5,5 @@ export type   Profiledto = {
     bio: string
     user_id : number
   }
+  export type method = "params" | "body" | "query"
+
