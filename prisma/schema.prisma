@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../generated/prisma"
@@ -14,56 +8,66 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Student {
-  id      Int     @id @default(autoincrement()) @map("user_id")
-  email   String  @unique
-  name    String
-  lname   String
-  isAlive Boolean @default(true)
-  age     Int
-
-  profile Profile?
-  Books   Books[]
-  Subject Subject[]
-  Many    Many[]
-
-  @@unique([name, lname])
-}
-
-model Profile {
-  id     Int     @id @default(autoincrement())
-  bio    String
-  userId Int     @unique
-  user   Student @relation(fields: [userId], references: [id])
-}
-
-model Books {
+model books {
   id           Int      @id @default(autoincrement())
   name         String
   Book_code    Int
   content_type String   @db.Text
   createdAt    DateTime @default(now())
   userId       Int
-  student      Student  @relation(fields: [userId], references: [id])
+  student      student  @relation(fields: [userId], references: [user_id], map: "Books_userId_fkey")
 
-  @@index([name])
-  @@map("Books")
+  @@index([name], map: "Books_name_idx")
+  @@index([userId], map: "Books_userId_fkey")
 }
 
-model Subject {
-  id        Int       @id @default(autoincrement())
-  name      String
-  Tutor     String
-  createdAt DateTime  @default(now())
-  stud_id   Int
-  student   Student @relation(fields: [stud_id], references: [id])
-  Many      Many[]
-}
-
-model Many {
+model many {
   id      Int     @id @default(autoincrement())
   stud_id Int
   sub_id  Int
-  student Student @relation(fields: [stud_id], references: [id])
-  subject Subject @relation(fields: [sub_id], references: [id])
+  student student @relation(fields: [stud_id], references: [user_id], map: "Many_stud_id_fkey")
+  subject subject @relation(fields: [sub_id], references: [id], map: "Many_sub_id_fkey")
+
+  @@index([stud_id], map: "Many_stud_id_fkey")
+  @@index([sub_id], map: "Many_sub_id_fkey")
+}
+
+model profile {
+  id      Int     @id @default(autoincrement())
+  bio     String
+  userId  Int     @unique(map: "Profile_userId_key")
+  student student @relation(fields: [userId], references: [user_id], map: "Profile_userId_fkey")
+}
+
+model student {
+  email   String    @unique(map: "Student_email_key")
+  name    String
+  age     Int
+  lname   String
+  user_id Int       @id @default(autoincrement())
+  isAlive Boolean   @default(true)
+  books   books[]
+  many    many[]
+  profile profile?
+  subject subject[]
+
+  @@unique([name, lname], map: "Student_name_lname_key")
+}
+
+model subject {
+  id        Int      @id @default(autoincrement())
+  name      String
+  Tutor     String
+  createdAt DateTime @default(now())
+  stud_id   Int
+  many      many[]
+  student   student  @relation(fields: [stud_id], references: [user_id], map: "Subject_stud_id_fkey")
+
+  @@index([stud_id], map: "Subject_stud_id_fkey")
+}
+
+model test {
+  id   Int    @id @default(autoincrement())
+  name String
+  age  Int
 }

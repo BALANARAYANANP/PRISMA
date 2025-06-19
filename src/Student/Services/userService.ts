@@ -15,7 +15,9 @@ export default class StudentServices {
   static async getAllStudents() {
     try {
       const users = await prisma.student.findMany({
-        include: { profile: true , Books : true , Subject: true},
+        skip: 0,
+        take: 1,
+        include: { profile: true, Books: true, Subject: true },
       });
       return users;
     } catch (err) {
@@ -23,15 +25,15 @@ export default class StudentServices {
     }
   }
 
-  static async getOneUser( id : OneUser) {
+  static async getOneUser(id: OneUser) {
     try {
       const user = await prisma.student.findUnique({
         where: { id: id.id },
         include: {
           profile: true,
           Books: true,
-          Subject: true
-        }
+          Subject: true,
+        },
       });
       return user;
     } catch (err) {
@@ -39,35 +41,31 @@ export default class StudentServices {
     }
   }
 
-  static async UpdateStudent (id:OneUser, data:Studentdto){
-    try{
-      const UpdatedStudent = await prisma.student.update({data:{
-
-        email: data.email,
-        name: data.name,
-        age: data.age,
-        lname: data.lname,
-        isAlive: data.isAlive
-      },
-      where:{id:id.id}
-      })
-      return UpdatedStudent
-    }catch(err){
+  static async UpdateStudent(id: OneUser, data: Studentdto) {
+    try {
+      const UpdatedStudent = await prisma.student.update({
+        data: {
+          email: data.email,
+          name: data.name,
+          age: data.age,
+          lname: data.lname,
+          isAlive: data.isAlive,
+        },
+        where: { id: id.id },
+      });
+      return UpdatedStudent;
+    } catch (err) {
       throw new Error();
-      
     }
-}
-  static async DeleteStudent (id: OneUser){
-    try{
-    const deleteStudent = await prisma.student.delete({where : {id: id.id}})
-    return deleteStudent
-  }catch(err)
-  {
-    throw new Error();
   }
-    
+  static async DeleteStudent(id: OneUser) {
+    try {
+      const deleteStudent = await prisma.student.delete({
+        where: { id: id.id },
+      });
+      return deleteStudent;
+    } catch (err) {
+      throw new Error();
+    }
   }
-
-
-
 }
